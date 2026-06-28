@@ -1,0 +1,23 @@
+# Build artifacts
+build/
+src_beacon/build/
+src_beacon/include/Config_profile.h
+src_loader/bin/
+src_sleepmask/dist/
+
+# Go plugin binaries
+src_server/agent_nonameax/*.so
+src_server/listener_nonameax_http/*.so
+src_server/service_nax_store/*.so
+src_server/service_nax_store/dist/
+
+# PE wrapper build artifacts
+src_server/agent_nonameax/pe_templates/Shellcode.h
+
+# Runtime config
+nax_root.conf
+
+# Editor / OS
+.DS_Store
+*.swp
+*.swo
