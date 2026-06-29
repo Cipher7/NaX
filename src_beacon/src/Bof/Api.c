@@ -142,6 +142,65 @@ FUNC BOOL BeaconInformation( PVOID info ) {
     return FALSE;   /* Phase 7A stub */
 }
 
+/* ========= [ key-value store ] ========= */
+
+FUNC BOOL BeaconAddValue( const CHAR* key, PVOID ptr ) {
+    G_INSTANCE;
+    if ( !Nax || Nax->Magic != NAX_INSTANCE_MAGIC || !key ) return FALSE;
+    UINT32 hash = NaxHashStr( (PCHAR)key );
+
+    NAX_KV_ENTRY* cur = Nax->KvHead;
+    while ( cur ) {
+        if ( cur->Hash == hash ) { cur->Ptr = ptr; return TRUE; }
+        cur = cur->Next;
+    }
+
+    NAX_KV_ENTRY* e = (NAX_KV_ENTRY*)Nax->Ntdll.RtlAllocateHeap( Nax->Heap, 0, sizeof( NAX_KV_ENTRY ) );
+    if ( !e ) return FALSE;
+    e->Hash = hash;
+    e->Ptr  = ptr;
+    e->Next = Nax->KvHead;
+    Nax->KvHead = e;
+    return TRUE;
+}
+
+FUNC PVOID BeaconGetValue( const CHAR* key ) {
+    G_INSTANCE;
+    if ( !Nax || Nax->Magic != NAX_INSTANCE_MAGIC || !key ) return NULL;
+    UINT32 hash = NaxHashStr( (PCHAR)key );
+
+    NAX_KV_ENTRY* cur = Nax->KvHead;
+    while ( cur ) {
+        if ( cur->Hash == hash ) return cur->Ptr;
+        cur = cur->Next;
+    }
+    return NULL;
+}
+
+FUNC BOOL BeaconRemoveValue( const CHAR* key ) {
+    G_INSTANCE;
+    if ( !Nax || Nax->Magic != NAX_INSTANCE_MAGIC || !key ) return FALSE;
+    UINT32 hash = NaxHashStr( (PCHAR)key );
+
+    NAX_KV_ENTRY** pp = &Nax->KvHead;
+    while ( *pp ) {
+        if ( (*pp)->Hash == hash ) {
+            NAX_KV_ENTRY* victim = *pp;
+            *pp = victim->Next;
+            Nax->Ntdll.RtlFreeHeap( Nax->Heap, 0, victim );
+            return TRUE;
+        }
+        pp = &(*pp)->Next;
+    }
+    return FALSE;
+}
+
+FUNC HANDLE BofGetProcessHeap( VOID ) {
+    G_INSTANCE;
+    if ( !Nax ) return NULL;
+    return Nax->Heap;
+}
+
 /* toWideChar - thin wrapper around MultiByteToWideChar; widely used by BOFs */
 FUNC BOOL toWideChar( CHAR* src, WCHAR* dst, INT max ) {
     G_INSTANCE;

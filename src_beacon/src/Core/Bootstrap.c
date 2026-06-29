@@ -160,6 +160,7 @@ FUNC PNAX_INSTANCE NaxBootstrap( VOID ) {
     PNAX_INSTANCE Nax  = (PNAX_INSTANCE)fnRtlAllocateHeap( heap, 0, sizeof( NAX_INSTANCE ) );
     if ( ! Nax ) return NULL;
     MmZero( Nax, sizeof( NAX_INSTANCE ) );
+    Nax->Magic                   = NAX_INSTANCE_MAGIC;
 
     /* - ntdll: heap + debug - */
     Nax->Heap                    = heap;

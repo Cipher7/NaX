@@ -321,6 +321,11 @@
 /* Async BOF APIs */
 #define H_BOF_BEACONWAKEUP                   0xde6f5ab4u
 #define H_BOF_BEACONGETSTOPJOBEVENT          0x6e7db176u
+/* BOF key-value store */
+#define H_BOF_BEACONADDVALUE         0x636D6BD1u  /* BeaconAddValue            */
+#define H_BOF_BEACONGETVALUE         0x64630FB8u  /* BeaconGetValue            */
+#define H_BOF_BEACONREMOVEVALUE      0x41B9FB76u  /* BeaconRemoveValue         */
+#define H_BOF_GETPROCESSHEAP         0x36C75DF2u  /* GetProcessHeap            */
 /* BOF proxy functions - bare LoadLibraryA/GetProcAddress/etc. (no MODULE$ prefix) */
 #define H_BOF_LOADLIBRARYA           0xE96CE9EFu  /* LoadLibraryA              */
 #define H_BOF_GETPROCADDRESS         0x12D71805u  /* GetProcAddress            */

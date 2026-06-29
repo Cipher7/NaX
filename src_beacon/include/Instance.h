@@ -411,6 +411,14 @@ typedef struct {
     BYTE   StompSlot;    /* sync=0xFF, async=0-3                               */
 } NAX_BOF_CTX;
 
+/* ========= [ BOF key-value store ] ========= */
+
+typedef struct _NAX_KV_ENTRY {
+    UINT32                Hash;
+    PVOID                 Ptr;
+    struct _NAX_KV_ENTRY* Next;
+} NAX_KV_ENTRY;
+
 /* ========= [ chunked download state ] ========= */
 
 typedef struct _NAX_DOWNLOAD {
@@ -520,8 +528,10 @@ typedef struct {
 /* ========= [ beacon instance ] ========= */
 
 #define NAX_HTTP_STALE_MS  60000u  /* close persistent handles when sleep > this */
+#define NAX_INSTANCE_MAGIC 0x4E615843u  /* "NaXC" */
 
 struct _NAX_INSTANCE {
+    UINT32       Magic;          /* NAX_INSTANCE_MAGIC — validates TEB pointer */
     CHAR         SessionId[17];  /* 16 hex chars + NUL                    */
     NAX_CONFIG   Config;         /* all runtime-configurable fields        */
     HANDLE       Heap;           /* private beacon heap                    */
@@ -565,6 +575,7 @@ struct _NAX_INSTANCE {
     NAX_TUNNEL*  TunnelHead;
     HANDLE       TunnelEvent;
     NAX_SHELL*   ShellHead;
+    NAX_KV_ENTRY* KvHead;
 
     PBYTE        DynResp;       /* dynamic heartbeat response (Content-Length > IO_CAP) */
     UINT32       DynRespLen;

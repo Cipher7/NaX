@@ -130,7 +130,7 @@ typedef struct {
     PVOID  Proc;   /* pointer to our implementation                 */
 } NAX_BOF_API;
 
-#define NAX_BOF_API_COUNT 29   /* 15 original + 6 beacon.h + 2 adaptix.h + 4 Win32 proxy + 2 async BOF */
+#define NAX_BOF_API_COUNT 33   /* 15 original + 6 beacon.h + 2 adaptix.h + 4 Win32 proxy + 2 async BOF + 3 KV store + 1 heap redirect */
 
 /* ========= [ Beacon API declarations ] ========= */
 /* Full contract: beacon.h (CS 4.x compatible).
