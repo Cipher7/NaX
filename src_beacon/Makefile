@@ -27,6 +27,9 @@ endif
 
 NAX_EXEC_MODE ?= 1
 
+NAX_STOMP_ADVANCED ?= 0
+CFLAGS += -DNAX_STOMP_ADVANCED=$(NAX_STOMP_ADVANCED)
+
 # Library linking - SMB variant doesn't need winhttp or iphlpapi
 ifeq ($(NAX_TRANSPORT_PROFILE),1)
 LINK_LIBS := -lbcrypt
@@ -152,6 +155,8 @@ DEBUG_CFLAGS := -g -O0 -DDEBUG \
 ifdef NAX_TRANSPORT_PROFILE
 DEBUG_CFLAGS += -DNAX_TRANSPORT_PROFILE=$(NAX_TRANSPORT_PROFILE)
 endif
+
+DEBUG_CFLAGS += -DNAX_STOMP_ADVANCED=$(NAX_STOMP_ADVANCED)
 
 # debug: PIC shellcode with debug prints baked in - load via loader exactly like
 # the release blob.  -Os kept for size; -DDEBUG_PIC guards the CRT main() stub.

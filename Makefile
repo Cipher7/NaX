@@ -27,7 +27,8 @@ LOADER_BIN       := src_loader/bin/nax_loader.x64.bin
 
 # Transport-specific beacon build directory
 NAX_TRANSPORT_PROFILE ?= 0
-BEACON_TRANSPORT := NAX_TRANSPORT_PROFILE=$(NAX_TRANSPORT_PROFILE)
+NAX_STOMP_ADVANCED    ?= 0
+BEACON_TRANSPORT := NAX_TRANSPORT_PROFILE=$(NAX_TRANSPORT_PROFILE) NAX_STOMP_ADVANCED=$(NAX_STOMP_ADVANCED)
 
 ifeq ($(NAX_TRANSPORT_PROFILE),1)
 BEACON_BUILD     := src_beacon/build/smb
@@ -70,7 +71,7 @@ PACK_FLAGS += --stomp-pdata
 endif
 
 # Loader technique defines
-LOADER_DEFINES := NAX_STOMP_MODE=$(NAX_STOMP_MODE) NAX_EXEC_MODE=$(NAX_EXEC_MODE)
+LOADER_DEFINES := NAX_STOMP_MODE=$(NAX_STOMP_MODE) NAX_EXEC_MODE=$(NAX_EXEC_MODE) NAX_STOMP_ADVANCED=$(NAX_STOMP_ADVANCED)
 
 .PHONY: all debug link debug-link loader beacon sleepmask debug-sleepmask clean \
         _sync-loader _sync-beacon _sync-beacon-debug

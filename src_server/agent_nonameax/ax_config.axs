@@ -84,6 +84,8 @@ function GenerateUI(listeners_type)
     // --- Loader ---
     let checkStomp = form.create_check("Module stomping (image-backed beacon)");
     checkStomp.setChecked(true);
+    let comboStompTech = form.create_combo();
+    comboStompTech.addItems(["Basic (LoadLibraryEx)", "Custom"]);
     let comboStompDll = form.create_textline("chakra.dll");
     let checkUnwind = form.create_check("Stomp .pdata (valid stack walks)");
     checkUnwind.setChecked(true);
@@ -92,6 +94,7 @@ function GenerateUI(listeners_type)
 
     form.connect(checkStomp, "stateChanged", function() {
         let on = checkStomp.isChecked();
+        comboStompTech.setEnabled(on);
         comboStompDll.setEnabled(on);
         checkUnwind.setEnabled(on);
         if (!on) checkUnwind.setChecked(false);
@@ -99,9 +102,10 @@ function GenerateUI(listeners_type)
 
     let loaderLayout = form.create_gridlayout();
     loaderLayout.addWidget(form.create_label("Module Stomp:"), 0, 0); loaderLayout.addWidget(checkStomp,      0, 1);
-    loaderLayout.addWidget(form.create_label("Stomp DLL:"),    1, 0); loaderLayout.addWidget(comboStompDll,   1, 1);
-    loaderLayout.addWidget(form.create_label("Unwind:"),       2, 0); loaderLayout.addWidget(checkUnwind,     2, 1);
-    loaderLayout.addWidget(form.create_label("Execution:"),    3, 0); loaderLayout.addWidget(checkThreadPool, 3, 1);
+    loaderLayout.addWidget(form.create_label("Technique:"),    1, 0); loaderLayout.addWidget(comboStompTech,  1, 1);
+    loaderLayout.addWidget(form.create_label("Stomp DLL:"),    2, 0); loaderLayout.addWidget(comboStompDll,   2, 1);
+    loaderLayout.addWidget(form.create_label("Unwind:"),       3, 0); loaderLayout.addWidget(checkUnwind,     3, 1);
+    loaderLayout.addWidget(form.create_label("Execution:"),    4, 0); loaderLayout.addWidget(checkThreadPool, 4, 1);
 
     let loaderPanel = form.create_panel();
     loaderPanel.setLayout(loaderLayout);
@@ -110,6 +114,7 @@ function GenerateUI(listeners_type)
     tab2.addWidget(loaderGroup, t2r, 0, 1, 2); t2r++;
 
     container.put("module_stomp", checkStomp);
+    container.put("stomp_advanced", comboStompTech);
     container.put("stomp_dll", comboStompDll);
     container.put("stomp_unwind", checkUnwind);
     container.put("thread_pool", checkThreadPool);
