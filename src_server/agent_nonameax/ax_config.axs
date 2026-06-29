@@ -341,9 +341,6 @@ function RegisterCommands(listenerType)
     let cmd_rm = ax.create_command("rm", "Delete a file", "rm {path}", "Queuing rm...");
     cmd_rm.addArgString("path", true, "File path to delete");
 
-    // ---- screenshot ----
-    let cmd_screenshot = ax.create_command("screenshot", "Capture desktop screenshot (GDI)", "screenshot", "Queuing screenshot...");
-
     // ---- download ----
     let cmd_download = ax.create_command("download", "Download a file from the agent machine", "download {path} {chunk_size}", "Queuing download...");
     cmd_download.addArgString("path", true, "Absolute path of the file to download");
@@ -537,7 +534,7 @@ function RegisterCommands(listenerType)
         cmd_sleep,
         cmd_cd, cmd_pwd, cmd_mkdir, cmd_rmdir, cmd_rm, cmd_cat, cmd_ls, cmd_ps,
         cmd_token,
-        cmd_screenshot, cmd_download, cmd_upload, cmd_bof,
+        cmd_download, cmd_upload, cmd_bof,
         cmd_execute,
         cmd_job,
         cmd_chunksize,
